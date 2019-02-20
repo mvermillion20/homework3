@@ -1,0 +1,99 @@
+---
+title: "Homework3"
+author: "Monica Vermillion"
+date: "February 16, 2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+## Question 1: Effect of Cut on the Price of Diamonds 
+
+```{r setup, include=FALSE}
+setwd("H:/HierarchicalModel/Homework/homework3_vermillion")
+```
+Load the Data:
+```{r Load Data Boxplot and P Estimates}
+# Quesiton 1: What is the effect of cut on the price on a diamond?
+diamonds <- read.csv("diamond.csv") # load diamond data 
+head(diamonds)# see fist 6 of data 
+#Order of Cuts: Fair, Good, Very Good, Premium, Ideal  
+boxplot(price~cut,data = diamonds, col="lightgray", notch = TRUE) # create boxplot 
+dim <- glm(price~cut, data = diamonds, family = "poisson") # fit data to a poisson distribution 
+d_coef <- coef(dim) #extract the coeffcients/ parameter estimates? 
+```
+
+
+```{r Effect Claculations}
+#Effect SIze between two values of X: exp(a+b*x2)-exp(a+b*x1) *exp() is the link func for poisson
+#Intercept/ Baseline for a fair cut 
+exp(d_coef[1])
+inter <- exp(d_coef[1])
+#Effect size Good Cut 
+exp(d_coef[1]+d_coef[2])-inter
+#Effect size of a Very Good Cut (coef6)
+exp(d_coef[1]+d_coef[3])-inter
+#Effect size of a Premium Cut 
+exp(d_coef[1]+d_coef[4])-inter
+#Effect size of an ideal cut 
+exp(d_coef[1]+d_coef[5])-inter
+
+```
+### Effect of Each Type of Cut 
+
+The baseline for a fair cut diamond is $4358.75, this comes from the inital intercept values connected through a log link. A good cut on a diamond decreases the price genreally by $429.89. A very good cut on a diamond also generally decreases the price from the baseline by $901.21. A premium cut effects the baseline price by generally increasing the price by $225.50. An ideal cut on a diamond effects the baseline by generally decreasing the price by $376.99. 
+Conclusion: Diamonds are really expesnive and getting a very good cut 
+
+``` {r 95% CI}
+exp(confint(dim))
+
+```
+All of the confidence intervals are extremely small and they are all positive (don't cross 0), indicating a strong confidence in the relationship of cut and price. 
+
+## Question 2: Imact of Eduction on Contraceptive Use 
+
+``` {r Question 2}
+cuse <- read.csv("contraception.csv")
+head(cuse)
+```
+
+```{r Binomial Distribution}
+# Use Bionomial Distribution, data is proportional 
+response <- cbind(cuse$notUsing, cuse$total-cuse$notUsing) #proportional response 
+boxplot(response~cuse$education) #boxplot of the data 
+B_cuse <- glm(response~education, data=cuse, family = "binomial") #model fit to bionomial 
+coef(B_cuse)
+plogis(coef(B_cuse)) #on real number line 
+confint(B_cuse)
+plogis(confint(B_cuse))
+```
+## Question 3: HERricanes vs HIMmicanes
+
+```{r Question 3}
+
+hurricanes <- read.csv("Hurricane Dataset.csv")
+head(hurricanes)
+
+FemHer <- glm(alldeaths~Gender_MF, data = hurricanes, family = "poisson")
+boxplot(alldeaths~Gender_MF, data=hurricanes)
+coef(FemHer)
+exp(coef(FemHer))
+confint(FemHer)
+
+
+```
+From the poisson  distribution the "sex" of the hurricane is a good indicator of the death count. 
+
+## Question 4: My Own Data 
+
+```{r Question 4}
+plant <-  read.csv("Copy of Vegetation_Plot_PercentAreaCover_2018.csv")
+plant$ï..Plot.Number <- NULL
+head(plant)
+boxplot(plant)
+#Percent Area Cover so use Beta distribution 
+Beta_plant <- 
+```
+
+
+
+
